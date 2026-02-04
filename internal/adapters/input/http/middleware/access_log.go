@@ -48,7 +48,7 @@ func AccessLog(logger output.Logger) func(next http.Handler) http.Handler {
 
 			switch {
 			case rec.status >= 500:
-				logger.Error(r.Context(), "http request", fields...)
+				logger.Error(r.Context(), "http request", nil, fields...)
 			case rec.status >= 400:
 				logger.Warn(r.Context(), "http request", fields...)
 			default:

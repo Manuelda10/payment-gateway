@@ -27,9 +27,7 @@ func (h *HealthHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	if err := h.pool.Ping(ctx); err != nil {
 		dbStatus = "down"
-		h.log.Warn(r.Context(), "db ping failed",
-			output.F("error", err),
-		)
+		h.log.Error(r.Context(), "db ping failed", err)
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")

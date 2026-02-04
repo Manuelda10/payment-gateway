@@ -25,8 +25,12 @@ func (l *Logger) Info(ctx context.Context, msg string, fields ...output.Field) {
 func (l *Logger) Warn(ctx context.Context, msg string, fields ...output.Field) {
 	l.get(ctx).Warn(msg, toZapFields(fields)...)
 }
-func (l *Logger) Error(ctx context.Context, msg string, fields ...output.Field) {
-	l.get(ctx).Error(msg, toZapFields(fields)...)
+func (l *Logger) Error(ctx context.Context, msg string, err error, fields ...output.Field) {
+	zf := toZapFields(fields)
+	if err != nil {
+		zf = append(zf, zap.Error(err))
+	}
+	l.get(ctx).Error(msg, zf...)
 }
 
 func (l *Logger) get(ctx context.Context) *zap.Logger {

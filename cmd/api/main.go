@@ -9,6 +9,8 @@ import (
 	httpapi "payment-gateway/internal/adapters/input/http"
 	zaplogger "payment-gateway/internal/adapters/output/logging/zap"
 	pg "payment-gateway/internal/adapters/output/persistence/postgres"
+	"payment-gateway/internal/adapters/output/processors/niubiz"
+	"payment-gateway/internal/application/services"
 
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
@@ -29,6 +31,13 @@ func main() {
 	defer func() { _ = zlog.Sync() }()
 	appLogger := zaplogger.New(zlog)
 
+	niubizClient := niubiz.NewClient(appLogger, niubiz.Config{
+		BaseURL:  cfg.NiubizBaseURL,
+		User:     cfg.NiubizUser,
+		Password: cfg.NiubizPassword,
+	})
+	niubizSvc := services.NewNiubizService(appLogger, niubizClient)
+
 	if cfg.DBDsnEmpty() {
 		zlog.Fatal("DB_DSN is required")
 	}
@@ -42,7 +51,7 @@ func main() {
 	defer pool.Close()
 
 	srv := httpapi.NewServer(zlog, appLogger)
-	h := httpapi.NewHandlers(appLogger, pool)
+	h := httpapi.NewHandlers(appLogger, pool, niubizSvc)
 
 	httpapi.RegisterRoutes(srv.Chi(), h)
 

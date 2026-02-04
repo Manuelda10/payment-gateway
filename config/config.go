@@ -8,6 +8,10 @@ type Config struct {
 	AppPort  string
 	DBDSN    string
 	LogLevel string
+
+	NiubizUser     string
+	NiubizPassword string
+	NiubizBaseURL  string
 }
 
 func Load() Config {
@@ -15,6 +19,10 @@ func Load() Config {
 		AppPort:  getEnv("APP_PORT", "8080"),
 		DBDSN:    getEnv("DB_DSN", ""),
 		LogLevel: getEnv("LOG_LEVEL", "info"),
+
+		NiubizUser:     getEnv("NIUBIZ_USER", ""),
+		NiubizPassword: getEnv("NIUBIZ_PASSWORD", ""),
+		NiubizBaseURL:  getEnv("NIUBIZ_BASE_URL", "https://apisandbox.vnforappstest.com"),
 	}
 }
 
